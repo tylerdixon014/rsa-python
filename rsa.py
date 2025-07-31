@@ -32,7 +32,6 @@ def random_prime(bit_length):
     return random.choice(valid_primes)
 
 # generate keys 
-
 def extended_gcd(a,b):  # extended euclidean algorithm
     if a == 0:
         return (b, 0, 1)
@@ -68,8 +67,22 @@ def encrypt(message, public_key):
     ciphertext = pow(message, e, n)
     return ciphertext
 
-def decrpyt(ciphertext, private_key):
+def decrypt(ciphertext, private_key):
     d, n = private_key
     message_decoded = pow(ciphertext, d, n)
     return message_decoded
 
+# main
+
+def main():
+    public_key, private_key = generate_keys(int(input("How many bits of encryption? (Over 16 bits will have a long computation time): ")))
+    print("Public key:", public_key)
+    print("Private key:", private_key)
+
+    ciphertext = encrypt(int(input("Message to be encrypted: ")), public_key)
+    print("Encrypted message:", ciphertext)
+
+    message_decrypted = decrypt(ciphertext, private_key)
+    print("Decoded message:", message_decrypted)
+
+main()
