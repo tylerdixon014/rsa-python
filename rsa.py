@@ -19,17 +19,21 @@ def sieve(limit):
         
         q += 1
 
-def random_prime(bit_length):
-    lower_bound = 2**(bit_length - 1)
-    upper_bound = 2**(bit_length)
+def random_prime(bits):
+    lower_bound = 2**(bits - 1)
+    upper_bound = 2**(bits)
 
-    primes = sieve(upper_bound)
-    valid_primes = [p for p in primes if lower_bound <= p]
+    primes = []
+    for p in sieve(upper_bound):
+        if p >= lower_bound:
+            primes.append(p)
+        if p > upper_bound:
+            break
 
-    if not valid_primes:
+    if not primes:
         print("There are no valid primes of the desired bit length")
 
-    return random.choice(valid_primes)
+    return random.choice(primes)
 
 # generate keys 
 def extended_gcd(a,b):  # extended euclidean algorithm
@@ -46,11 +50,11 @@ def modinv(a, m): # modular inverse function
     else:
         return x % m
 
-def generate_keys(bit_length):
-    p = random_prime(bit_length)
-    q = random_prime(bit_length)
+def generate_keys(bits):
+    p = random_prime(bits)
+    q = random_prime(bits)
     while p == q:
-        q = random_prime(bit_length)
+        q = random_prime(bits)
 
     n = p * q
     totient = (p - 1) * (q - 1)
@@ -64,14 +68,19 @@ def generate_keys(bit_length):
 # encryption / decryption
 def encrypt(message, public_key):
     e, n = public_key
-    message_encoded = int.from_bytes(message.encode())
-    ciphertext = pow(message_encoded, e, n)
+    message_int = int.from_bytes(message.encode(),'big')
+
+    if message_int >= n:
+        raise ValueError("Message is too long.")
+
+    ciphertext = pow(message_int, e, n)
     return ciphertext
 
 def decrypt(ciphertext, private_key):
     d, n = private_key
-    message_encoded = int.to_bytes(pow(ciphertext, d, n))
-    return message_encoded.decode()
+    message_int = pow(ciphertext, d, n)
+    message_bytes = int.to_bytes(message_int,(message_int.bit_length() + 7) // 8, 'big')
+    return message_bytes.decode()
 
 # main
 
@@ -86,4 +95,5 @@ def main():
     message_decrypted = decrypt(ciphertext, private_key)
     print("Decrypted message:", message_decrypted)
 
-main()
+if __name__ == "__main__":
+    main()
