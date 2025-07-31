@@ -4,36 +4,50 @@ import math
 e = 65537
 
 # prime generator function (sieve of eratosthenes)
-def sieve(limit):
-    D = {}
-    q = 2
 
-    while q <= limit:
-        if q not in D:
-            yield q
-            D[q * q] = [q]
-        else:
-            for p in D[q]:
-                D.setdefault(p + q, []).append(p)
-            del D[q]
+import random
+
+def is_Prime(n):
+    if n != int(n):
+        return False
+    n = int(n)
+    
+    if n == 0 or n == 1 or n == 3 or n == 4 or n == 6 or n == 8 or n == 9:
+        return False
+    if n == 2 or n == 5 or n == 7:
+        return True
+    
+    s = 0
+    d = n - 1
+    while d % 2 == 0:
+        d >>= 1
+        s += 1
+    assert(2 ** s * d == n-1)
+    
+    def trial_composite(a):
+        if pow(a, d, n) == 1:
+            return False
+        for i in range(s):
+            if pow(a, 2 ** i * d, n) == n - 1:
+                return False
+        return True
+    
+    for i in range(8):  #number of trials
+        a = random.randrange(2, n)
+        if trial_composite(a):
+            return False
         
-        q += 1
+    return True
 
-def random_prime(bits):
-    lower_bound = 2**(bits - 1)
-    upper_bound = 2**(bits)
+def random_Prime(bits):
+    lower_bound = 2 ** (bits - 1)
+    upper_bound = 2 ** bits
 
-    primes = []
-    for p in sieve(upper_bound):
-        if p >= lower_bound:
-            primes.append(p)
-        if p > upper_bound:
-            break
+    p = random.randrange(lower_bound,upper_bound)
+    while is_Prime(p) == False:
+        p = random.randrange(lower_bound,upper_bound)
 
-    if not primes:
-        print("There are no valid primes of the desired bit length")
-
-    return random.choice(primes)
+    return p
 
 # generate keys 
 def extended_gcd(a,b):  # extended euclidean algorithm
@@ -51,10 +65,10 @@ def modinv(a, m): # modular inverse function
         return x % m
 
 def generate_keys(bits):
-    p = random_prime(bits)
-    q = random_prime(bits)
+    p = random_Prime(bits)
+    q = random_Prime(bits)
     while p == q:
-        q = random_prime(bits)
+        q = random_Prime(bits)
 
     n = p * q
     totient = (p - 1) * (q - 1)
