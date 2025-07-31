@@ -64,13 +64,14 @@ def generate_keys(bit_length):
 # encryption / decryption
 def encrypt(message, public_key):
     e, n = public_key
-    ciphertext = pow(message, e, n)
+    message_encoded = int.from_bytes(message.encode())
+    ciphertext = pow(message_encoded, e, n)
     return ciphertext
 
 def decrypt(ciphertext, private_key):
     d, n = private_key
-    message_decoded = pow(ciphertext, d, n)
-    return message_decoded
+    message_encoded = int.to_bytes(pow(ciphertext, d, n))
+    return message_encoded.decode()
 
 # main
 
@@ -79,10 +80,10 @@ def main():
     print("Public key:", public_key)
     print("Private key:", private_key)
 
-    ciphertext = encrypt(int(input("Message to be encrypted: ")), public_key)
+    ciphertext = encrypt(input("Message to be encrypted: "), public_key)
     print("Encrypted message:", ciphertext)
 
     message_decrypted = decrypt(ciphertext, private_key)
-    print("Decoded message:", message_decrypted)
+    print("Decrypted message:", message_decrypted)
 
 main()
