@@ -110,7 +110,7 @@ def decrypt(ciphertext, private_key):
         print("Decoding error")
 # gui
 
-class gui_Encrypt:
+class gui_Main:
 
     def __init__(self, root):
 
@@ -122,7 +122,7 @@ class gui_Encrypt:
         root.rowconfigure(0, weight=1)
        
         self.message = StringVar()
-        message_entry = ttk.Entry(mainframe, width=7, textvariable=self.message)
+        message_entry = ttk.Entry(mainframe, width=12, textvariable=self.message)
         message_entry.grid(column=2, row=1, sticky=W)
 
         self.bits = StringVar()
@@ -170,7 +170,7 @@ class gui_Encrypt:
             self.error_message.set("There was an error")
 
 root = Tk()
-gui_Encrypt(root)
+gui_Main(root)
 root.mainloop()
 
 # bits_input = int(input("Bits:"))
