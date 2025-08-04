@@ -82,39 +82,35 @@ def generate_keys(bits):
 # encryption / decryption
 def encrypt(message, public_key):
     e, n = public_key
-    message_int = int.from_bytes(message.encode(),'big')
+    try:
+        message_int = int.from_bytes(message.encode(),'big')
+    except ValueError:
+        print("Encoding error")
+    
 
     if message_int >= n:
         raise ValueError("Message is too long.")
 
-    ciphertext = pow(message_int, e, n)
+    try:
+        ciphertext = pow(message_int, e, n)
+    except ValueError:
+        print("Encryption error")
     return ciphertext
 
 def decrypt(ciphertext, private_key):
     d, n = private_key
-    message_int = pow(ciphertext, d, n)
+    try:
+        message_int = pow(ciphertext, d, n)
+    except ValueError:
+        print("Decryption error")
     message_bytes = int.to_bytes(message_int,(message_int.bit_length() + 7) // 8, 'big')
-    return message_bytes.decode()
-
-# main
-
-# def main():
-#     public_key, private_key = generate_keys(int(input("How many bits of encryption? (Over 16 bits will have a long computation time): ")))
-#     print("Public key:", public_key)
-#     print("Private key:", private_key)
-
-#     ciphertext = encrypt(input("Message to be encrypted: "), public_key)
-#     print("Encrypted message:", ciphertext)
-
-#     message_decrypted = decrypt(ciphertext, private_key)
-#     print("Decrypted message:", message_decrypted)
-
-# if __name__ == "__main__":
-    main()
-
+    try:
+        return message_bytes.decode()
+    except ValueError:
+        print("Decoding error")
 # gui
 
-class EncryptDecrypt:
+class gui_Encrypt:
 
     def __init__(self, root):
 
@@ -137,11 +133,13 @@ class EncryptDecrypt:
         self.private_key = StringVar()
         self.ciphertext = StringVar()
         self.message_deciphered = StringVar()
+        self.error_message = StringVar()
 
         ttk.Label(mainframe, textvariable=self.public_key).grid(column=2, row=2, sticky=(W, E))
         ttk.Label(mainframe, textvariable=self.private_key).grid(column=2, row=3, sticky=(W, E))
         ttk.Label(mainframe, textvariable=self.ciphertext).grid(column=2, row=4, sticky=(W, E))
         ttk.Label(mainframe, textvariable=self.message_deciphered).grid(column=2, row=5, sticky=(W, E))
+        ttk.Label(mainframe, textvariable=self.error_message).grid(column=2, row=6, sticky=(W, E))
 
         ttk.Button(mainframe, text="Encrypt", command=self.gui_encrypt).grid(column=5, row=1, sticky=W)
 
@@ -151,6 +149,7 @@ class EncryptDecrypt:
         ttk.Label(mainframe, text="Private Key:").grid(column=1, row=3, sticky=W)
         ttk.Label(mainframe, text="Encrypted Message:").grid(column=1, row=4, sticky=W)
         ttk.Label(mainframe, text="Decrypted Message:").grid(column=1, row=5, sticky=W)
+        ttk.Label(mainframe, text="Error:").grid(column=1, row=6, sticky=W)
 
         for child in mainframe.winfo_children(): 
             child.grid_configure(padx=5, pady=5)
@@ -166,9 +165,18 @@ class EncryptDecrypt:
             self.public_key.set(public_key)
             self.private_key.set(private_key)
             self.ciphertext.set(ciphertext)
+            self.error_message.set("")
         except ValueError:
-            pass
+            self.error_message.set("There was an error")
 
 root = Tk()
-EncryptDecrypt(root)
+gui_Encrypt(root)
 root.mainloop()
+
+# bits_input = int(input("Bits:"))
+# message_input = input("Message:")
+# sample_public_key, sample_private_key = generate_keys(bits_input)
+# sample_ciphertext = encrypt(message_input, sample_public_key)
+# print("Encrypted message:", sample_ciphertext)
+# sample_decrypted_message = decrypt(sample_ciphertext, sample_private_key)
+# print("Decrypted message:", sample_decrypted_message)
