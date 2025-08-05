@@ -123,11 +123,24 @@ class gui_Main:
        
         self.message = StringVar()
         message_entry = ttk.Entry(mainframe, width=12, textvariable=self.message)
-        message_entry.grid(column=2, row=1, sticky=W)
+        message_entry.grid(column=2, row=6, sticky=W)
 
         self.bits = StringVar()
         bits_entry = ttk.Entry(mainframe, width=7, textvariable=self.bits)
-        bits_entry.grid(column=4, row=1, sticky=W)
+        bits_entry.grid(column=2, row=1, sticky=W)
+
+        self.ciphertext_label = StringVar()
+        ciphertext_entry = ttk.Entry(mainframe, width = 12, textvariable=self.ciphertext_label)
+        ciphertext_entry.grid(column=2, row=11, sticky=W)
+
+        self.public_key_label = StringVar()
+        public_key_entry = ttk.Entry(mainframe, width=12, textvariable=self.public_key_label)
+        public_key_entry.grid(column=2, row=7)
+
+        self.private_key_label = StringVar()
+        private_key_entry = ttk.Entry(mainframe, width=12, textvariable=self.private_key_label)
+        private_key_entry.grid(column=2, row=12)
+
 
         self.public_key = StringVar()
         self.private_key = StringVar()
@@ -135,28 +148,39 @@ class gui_Main:
         self.message_deciphered = StringVar()
         self.error_message = StringVar()
 
-        ttk.Label(mainframe, textvariable=self.public_key).grid(column=2, row=2, sticky=(W, E))
-        ttk.Label(mainframe, textvariable=self.private_key).grid(column=2, row=3, sticky=(W, E))
-        ttk.Label(mainframe, textvariable=self.ciphertext).grid(column=2, row=4, sticky=(W, E))
-        ttk.Label(mainframe, textvariable=self.message_deciphered).grid(column=2, row=5, sticky=(W, E))
-        ttk.Label(mainframe, textvariable=self.error_message).grid(column=2, row=6, sticky=(W, E))
+        # Column 1
+        ttk.Label(mainframe, text="# of bits of encryption:").grid(column=1, row=1, sticky=W)
+        ttk.Button(mainframe, text="Generate keys", command=self.gui_generate_keys).grid(column=1, row=2, sticky=W)
+        ttk.Label(mainframe, text="Generated public key:").grid(column=1, row=3, sticky=W)
+        ttk.Label(mainframe, text="Generated private key:").grid(column=1, row=4, sticky=W)
 
-        ttk.Button(mainframe, text="Encrypt", command=self.gui_encrypt).grid(column=5, row=1, sticky=W)
+        ttk.Label(mainframe, text="Message:").grid(column=1, row=6, sticky=W)
+        ttk.Label(mainframe, text="Input public key:").grid(column=1, row=7, sticky=W)
+        ttk.Button(mainframe, text="Encrypt message", command=self.gui_encrypt).grid(column=1, row=8, sticky=W)
+        ttk.Label(mainframe, text="Ciphertext output:").grid(column=1, row=9, sticky=W)
 
-        ttk.Label(mainframe, text="Message:").grid(column=1, row=1, sticky=W)
-        ttk.Label(mainframe, text="Bits:").grid(column=3, row=1, sticky=W)
-        ttk.Label(mainframe, text="Public Key:").grid(column=1, row=2, sticky=W)
-        ttk.Label(mainframe, text="Private Key:").grid(column=1, row=3, sticky=W)
-        ttk.Label(mainframe, text="Encrypted Message:").grid(column=1, row=4, sticky=W)
-        ttk.Label(mainframe, text="Decrypted Message:").grid(column=1, row=5, sticky=W)
-        ttk.Label(mainframe, text="Error:").grid(column=1, row=6, sticky=W)
+        ttk.Label(mainframe, text="Input ciphertext:").grid(column=1, row=11, sticky=W)
+        ttk.Label(mainframe, text="Input private key:").grid(column=1, row=12, sticky=W)
+        ttk.Button(mainframe, text="Decrypt ciphertext", command=self.gui_decrypt).grid(column=1,row=13)
+        ttk.Label(mainframe, text="Decrypted Message:").grid(column=1, row=14, sticky=W)
+
+        ttk.Label(mainframe, text="Error:").grid(column=1, row=16, sticky=W)
+
+        # column 2
+        ttk.Label(mainframe, textvariable=self.public_key).grid(column=2, row=3, sticky=(W, E))
+        ttk.Label(mainframe, textvariable=self.private_key).grid(column=2, row=4, sticky=(W, E))
+        ttk.Label(mainframe, textvariable=self.ciphertext).grid(column=2, row=9, sticky=(W, E))
+        ttk.Label(mainframe, textvariable=self.message_deciphered).grid(column=2, row=14, sticky=(W, E))
+        ttk.Label(mainframe, textvariable=self.error_message).grid(column=2, row=16, sticky=(W, E))
+
 
         for child in mainframe.winfo_children(): 
             child.grid_configure(padx=5, pady=5)
 
         bits_entry.focus()
         message_entry.focus()
-        root.bind("<Return>", self.gui_encrypt)
+        public_key_entry.focus()
+        ciphertext_entry.focus()
 
     def gui_encrypt(self, *args):
         try:
@@ -169,6 +193,12 @@ class gui_Main:
         except ValueError:
             self.error_message.set("There was an error")
 
+    def gui_generate_keys(self, *args):
+        return 0
+    
+    def gui_decrypt(self, *args):
+        return 0
+    
 root = Tk()
 gui_Main(root)
 root.mainloop()
